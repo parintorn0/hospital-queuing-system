@@ -1,2 +1,2 @@
-## Hospital Queuing System
-# Swing application
+## Swing application
+### Hospital Queuing System
