@@ -1,3 +1,5 @@
+package com.parintorn0.app;
+
 class QueuingSystem
 {
     //------------------Object_in_Queueing_system------------------//
