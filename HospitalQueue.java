@@ -1,7 +1,8 @@
 import javax.swing.*;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -12,178 +13,156 @@ import java.time.format.DateTimeFormatter;
 // ->If emergency patient come to the hospital (name: C): Pfirst=>C, Qfirst=>A=>B, Plast=>C, Qlast=>B
 // ->If emergency patient come to the hospital (name: D): Pfirst=>C=>D, Qfirst=>A=>B, Plast=>D, Qlast=>B
 
-
-class Link
-{
-    //------------------Object_in_Linked_list------------------//
-    public String nameData;
-    public String reasonData;
-    public Boolean emergencyData;
-    public String timeData;         // Using local time to sort the patients
-    public Link next;               // a next linked list of this linked list
-
-    //------------------Linked_list_Methods------------------//
-    public Link(String name, String reason, Boolean emergency, String time)     // Linked_list_constructor
-    {
-        nameData = name;
-        reasonData = reason;
-        emergencyData = emergency;
-        timeData = time;
-    }
-    public String displayLink()             // To return all information in each patient
-    {
-        if(emergencyData)           // check whether emergency
-        {
-            return ("Name: " + nameData + ", Reason: " + reasonData + ", Arrival Time: " + timeData + ", Emergency case");
-        }
-        return ("Name: " + nameData + ", Reason: " + reasonData + ", Arrival Time: " + timeData);
-    }
-}
-class QueuingSystem
-{
-    //------------------Object_in_Queueing_system------------------//
-    public static int numQPatients;     // Number of non-emergency patients
-    public static int numPPatients;     // Number of emergency patients
-    private static Link Qfirst;         // Pointer of non-emergency linked list
-    private static Link Pfirst;         // Pointer of emergency linked list
-    private static Link Qlast;          // Pointer of last non-emergency linked list
-    private static Link Plast;          // Pointer of last emergency linked list
-
-    //------------------Queueing_system_Methods------------------//
-    public QueuingSystem()              // Queueing_system_constructor
-    {
-        Qfirst=null;
-        Pfirst=null;
-        Plast=null;
-        Qlast=null;
-        numQPatients=0;
-        numPPatients=0;
-    }
-    public static boolean QisEmpty() { return Qfirst==null; } // check whether non-emergency linked list empty
-    public static boolean PisEmpty() { return Pfirst==null; } // check whether emergency linked list empty
-    public static void insertLast(String name, String reason, Boolean emergency, String time) // Enqueue
-    {
-        Link newLink=new Link(name, reason, emergency, time); // create new linked list for inserting new patient queue
-        if(emergency)       // check whether emergency
-        {
-            if( PisEmpty() )                // if empty list,
-                Pfirst = newLink;           // Pfirst --> newLink
-            else
-                Plast.next = newLink;       // old Plast --> newLink
-            Plast = newLink;                // set old Plast to be updated
-            numPPatients++;
-        }
-        else {
-            if (QisEmpty())                 // if empty list,
-                Qfirst = newLink;           // Qfirst --> newLink
-            else
-                Qlast.next = newLink;       // old Qlast --> newLink
-            Qlast = newLink;                // set old Qlast to be updated
-            numQPatients++;
-        }
-    }
-    public static void deleteFirst() // Dequeue
-    {
-        if(PisEmpty() & QisEmpty())         // check whether both linked lists are empty
-        {
-            System.out.println("There is nothing to delete.");
-        }
-        else if(!QisEmpty())                // check whether non-emergency are not empty
-        {
-            if(Qfirst.next == null)         // check whether it has only one non-emergency patient
-                Qlast = null;               // pointer of last of non-emergency linked list is null (No patient)
-            Qfirst = Qfirst.next;           // pointer of non-emergency linked list point to the next linked list
-            numQPatients--;
-        }
-        else                                // emergency are not empty then
-        {
-            if(Pfirst.next == null)         // check whether it has only one emergency patient
-                Plast = null;               // pointer of last of emergency linked list is null (No patient)
-            Pfirst = Pfirst.next;           // pointer of emergency linked list point to the next linked list
-            numPPatients--;
-        }
-    }
-    public Link getQfirst() // get a pointer of non-emergency linked list (for tracking)
-    {
-        return Qfirst;
-    }
-    public Link getPfirst() // get a pointer of non-emergency linked list (for tracking)
-    {
-        return Pfirst;
-    }
-    public static String[] displayPatients() // get an array of patients data (for display in UI)
-    {
-        String[] arrayData=new String[6];           // create an array size of 6 (for display in 6 labels of UI) for development use vector for unlimited size
-        int i=0;
-        Link current = Pfirst;                      // create current for tracking emergency linked list
-        while(current != null)                      // loop until it end
-        {
-            if(i==6){ return arrayData; }           // check whether arrayData is full
-            arrayData[i]= current.displayLink();    // append to array
-            i++;
-            current = current.next;                 // move to the next linked list
-        }
-        current=Qfirst;                             // track non-emergency linked list
-        while(current != null)                      // loop until it end
-        {
-            if(i==6){ return arrayData; }           // check whether arrayData is full
-            arrayData[i]=current.displayLink();     // append to array
-            i++;
-            current = current.next;                 // move to the next linked list
-        }
-        return arrayData;
-    }
-}
 public class HospitalQueue extends JFrame
 {
-    private JTextField NameTextfield;
-    private JTextField ReasonTextfield;
+    private JTextField nameTextfield;
+    private JTextField reasonTextfield;
     private JButton submitButton;
     private JButton clearButton;
     private JButton exitButton;
     private JRadioButton yesRadioButton;
     private JRadioButton noRadioButton;
-    private JLabel NameLabel;
-    private JLabel ReasonLabel;
-    private JLabel EmergencyLabel;
+    private JLabel nameLabel;
+    private JLabel reasonLabel;
+    private JLabel emergencyLabel;
     private JPanel panelMain;
     private JPanel buttonPanel;
-    private JPanel PanelData;
+    private JPanel panelData;
+    private JPanel userInputPanel;
     //-------Data Label--------------------------
     private final JLabel[] dataArray =new JLabel[6];        // create an array to contain all data labels
-    private JLabel data1label;
-    private JLabel data2label;
-    private JLabel data3label;
-    private JLabel data4label;
-    private JLabel data5label;
-    private JLabel data6label;
     private JButton dequeueButton;
 
-    private static QueuingSystem hospital = new QueuingSystem();;
+    private static QueuingSystem hospital = new QueuingSystem();
 
     public HospitalQueue() throws IOException // UI_constructor
     {
         super("Hospital Queue Simulator");
-        dataArray[0]=data1label;        // set all label to data in array (by index) (for easier in develop)
-        dataArray[1]=data2label;
-        dataArray[2]=data3label;
-        dataArray[3]=data4label;
-        dataArray[4]=data5label;
-        dataArray[5]=data6label;
-        for(int i=0;i<6;i++){
+        
+        nameLabel = new JLabel("Name");
+        nameLabel.setPreferredSize(new Dimension(64, 16));
+        nameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        reasonLabel = new JLabel("Reason");
+        reasonLabel.setPreferredSize(new Dimension(64, 16));
+        reasonLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        nameTextfield = new JTextField(1);
+        nameTextfield.setFont(new Font("Arial", Font.PLAIN, 14));
+        // nameTextfield.setPreferredSize(new Dimension(550, 24));
+
+        reasonTextfield = new JTextField(1);
+        reasonTextfield.setFont(new Font("Arial", Font.PLAIN, 14));
+        // reasonTextfield.setPreferredSize(new Dimension(550, 24));
+
+        emergencyLabel = new JLabel("Emergency");
+        emergencyLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        yesRadioButton = new JRadioButton("Emergency");
+        yesRadioButton.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        noRadioButton = new JRadioButton("Non-Emergency");
+        noRadioButton.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JPanel radioPanel = new JPanel();
+        radioPanel.setLayout(new GridLayout(1,2));
+        radioPanel.add(yesRadioButton);
+        radioPanel.add(noRadioButton);
+
+
+        userInputPanel = new JPanel(new GridBagLayout());
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(5, 5, 5, 5);
+
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        userInputPanel.add(nameLabel, c);
+
+        c.gridx = 1;
+        c.gridy = 0;
+        c.gridwidth = 2;
+        userInputPanel.add(nameTextfield, c);
+
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        userInputPanel.add(reasonLabel, c);
+
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = 2;
+        userInputPanel.add(reasonTextfield, c);
+
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        userInputPanel.add(emergencyLabel, c);
+
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 2;
+        userInputPanel.add(radioPanel, c);
+        userInputPanel.setPreferredSize(new Dimension(500, 150));
+
+        submitButton = new JButton("Submit");
+        submitButton.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        clearButton = new JButton("Clear");
+        clearButton.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        exitButton = new JButton("Exit");
+        exitButton.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        dequeueButton = new JButton("Dequeue");
+        dequeueButton.setFont(new Font("Arial", Font.PLAIN, 14));
+
+
+        buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(4, 1, 10, 10));
+        buttonPanel.add(submitButton);
+        buttonPanel.add(clearButton);
+        buttonPanel.add(exitButton);
+        buttonPanel.add(dequeueButton);
+
+        panelData = new JPanel();
+        panelData.setLayout(new GridLayout(6, 1, 5, 5));
+        panelData.setBorder(new javax.swing.border.EmptyBorder(new Insets(10,20,20,10))); // set border for data panel
+
+        for(int i=0;i<6;i++){               // create 6 labels for displaying patients data
+            dataArray[i]=new JLabel("");
+            dataArray[i].setFont(new Font("Arial", Font.PLAIN, 14));
             dataArray[i].setPreferredSize(new Dimension(450,16));
+            panelData.add(dataArray[i]);
         }
-        this.panelMain.setPreferredSize(new Dimension(600,400));
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setContentPane(this.panelMain);
-        this.pack();                        // display with decent window dimension
+
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10)); // create a top panel with FlowLayout
+        topPanel.setPreferredSize(new Dimension(600, 100)); // set preferred size for top panel
+        topPanel.setBorder(new javax.swing.border.EmptyBorder(new Insets(20,20,20,20))); // set border for button panel
+        topPanel.add(userInputPanel);
+        topPanel.add(buttonPanel);
+
+        panelMain = new JPanel();
+        panelMain.setPreferredSize(new Dimension(800, 450));
+        panelMain.setLayout(new GridLayout(2, 1)); // set layout for main panel to display 2 rows with 10px gap
+        panelMain.add(topPanel);
+        panelMain.add(panelData);
+        panelMain.setBorder(new javax.swing.border.LineBorder(new Color(1),1)); // set border for user input panel
+        
+
+        setContentPane(panelMain);
+        pack();                        // display with decent window dimension
         read();
+
         for(int i=0;i<6;i++){               // display all patients data from array into UI labels
             if(hospital.displayPatients()[i]==null){
                 break;
             }
             dataArray[i].setText(String.valueOf(i+1)+" "+hospital.displayPatients()[i]);
         }
+
         submitButton.addActionListener(new ButtonListener());
         clearButton.addActionListener(new ButtonListener());
         exitButton.addActionListener(new ButtonListener());
@@ -191,6 +170,8 @@ public class HospitalQueue extends JFrame
         noRadioButton.addActionListener(new ButtonListener());
         dequeueButton.addActionListener(new ButtonListener());
         noRadioButton.setSelected(true);        // set default to non-emergency
+        
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public static void write()  // method to save all patients data in txt file
@@ -224,32 +205,36 @@ public class HospitalQueue extends JFrame
     public static void read() throws IOException // method to recall patients data from txt file
     {
         File file = new File("DataBackup.txt");
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String st;
-        String name;
-        String reason;
-        String time;
-        boolean emergency = true;
-        st = br.readLine();
-        while (!st.equals("0")) {
-            name = st;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String st;
+            String name;
+            String reason;
+            String time;
+            boolean emergency = true;
             st = br.readLine();
-            reason = st;
-            st = br.readLine();
-            time = st;
-            st = br.readLine();
-            hospital.insertLast(name,reason,emergency,time);
+            while (!st.equals("0")) {
+                name = st;
+                st = br.readLine();
+                reason = st;
+                st = br.readLine();
+                time = st;
+                st = br.readLine();
+                hospital.insertLast(name,reason,emergency,time);
+            }
+            st= br.readLine();
+            emergency=false;
+            while(st!=null) {
+                name = st;
+                st = br.readLine();
+                reason = st;
+                st = br.readLine();
+                time = st;
+                st = br.readLine();
+                hospital.insertLast(name,reason,emergency,time);
+            }
         }
-        st= br.readLine();
-        emergency=false;
-        while(st!=null) {
-            name = st;
-            st = br.readLine();
-            reason = st;
-            st = br.readLine();
-            time = st;
-            st = br.readLine();
-            hospital.insertLast(name,reason,emergency,time);
+        catch (Exception e) {
+            System.exit(0);
         }
         System.out.println("Successfully read the file.");
     }
@@ -262,29 +247,29 @@ public class HospitalQueue extends JFrame
             String reason;
             Boolean emergency = false;
             if(e.getSource() == submitButton) {
-                if(NameTextfield.getText().equals("Please fill the name") | ReasonTextfield.getText().equals("Please fill a reason"))
+                if(nameTextfield.getText().equals("Please fill the name") | reasonTextfield.getText().equals("Please fill a reason"))
                 {
                     return;
                 }
-                if(NameTextfield.getText().isEmpty() & ReasonTextfield.getText().isEmpty())
+                if(nameTextfield.getText().isEmpty() & reasonTextfield.getText().isEmpty())
                 {
-                    NameTextfield.setText("Please fill the name");
-                    ReasonTextfield.setText("Please fill a reason");
+                    nameTextfield.setText("Please fill the name");
+                    reasonTextfield.setText("Please fill a reason");
                     return;
                 }
-                else if(ReasonTextfield.getText().isEmpty())
+                else if(reasonTextfield.getText().isEmpty())
                 {
-                    ReasonTextfield.setText("Please fill a reason");
+                    reasonTextfield.setText("Please fill a reason");
                     return;
                 }
-                else if(NameTextfield.getText().isEmpty())
+                else if(nameTextfield.getText().isEmpty())
                 {
-                    NameTextfield.setText("Please fill a reason");
+                    nameTextfield.setText("Please fill a reason");
                     return;
                 }
                 if((!yesRadioButton.isSelected() & !noRadioButton.isSelected())){ return; }
-                name = NameTextfield.getText();
-                reason = ReasonTextfield.getText();
+                name = nameTextfield.getText();
+                reason = reasonTextfield.getText();
                 if (yesRadioButton.isSelected())
                     emergency = true;
                 else
@@ -300,14 +285,14 @@ public class HospitalQueue extends JFrame
                 }
                 HospitalQueue.write();
                 //---------Clear text in all button---------------------------
-                NameTextfield.setText("");
-                ReasonTextfield.setText("");
+                nameTextfield.setText("");
+                reasonTextfield.setText("");
                 yesRadioButton.setSelected(false);
                 noRadioButton.setSelected(true);
             }
             else if(e.getSource() == clearButton){ //Clear text in all button
-                NameTextfield.setText("");
-                ReasonTextfield.setText("");
+                nameTextfield.setText("");
+                reasonTextfield.setText("");
                 yesRadioButton.setSelected(false);
                 noRadioButton.setSelected(true);
             }
