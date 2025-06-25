@@ -1,3 +1,5 @@
+package com.parintorn0.app;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -197,7 +199,7 @@ public class HospitalQueue extends JFrame
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            System.out.println("An error occurred while writing to the file.");
             e.printStackTrace();
         }
     }
@@ -234,6 +236,8 @@ public class HospitalQueue extends JFrame
             }
         }
         catch (Exception e) {
+            System.out.println("An error occurred while reading the file.");
+            e.printStackTrace();
             System.exit(0);
         }
         System.out.println("Successfully read the file.");
@@ -264,7 +268,7 @@ public class HospitalQueue extends JFrame
                 }
                 else if(nameTextfield.getText().isEmpty())
                 {
-                    nameTextfield.setText("Please fill a reason");
+                    nameTextfield.setText("Please fill a name");
                     return;
                 }
                 if((!yesRadioButton.isSelected() & !noRadioButton.isSelected())){ return; }
