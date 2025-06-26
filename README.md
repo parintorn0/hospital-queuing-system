@@ -7,10 +7,9 @@
 ### Run Requirement
 - JVM 21 (Tested)
 
-### Build and Run
-`mvn clean package` to build app
-
-`java -cp "/path/to/hospital-queuing-system-v*.*.*.jar" com.parintorn0.app.HospitalQueue` to run app
+### Build
+#### `mvn clean package` to build app
 
 ### Run
-`java -cp "/path/to/hospital-queuing-system-v*.*.*.jar" com.parintorn0.app.HospitalQueue` to run app
+#### copy app.db to `/path/to` directory
+#### `java -cp "/path/to/hospital-queuing-system-v*.*.*.jar" com.parintorn0.app.HospitalQueue` to run app
