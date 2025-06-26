@@ -114,4 +114,11 @@
       </plugin>
     </plugins>
   </build>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/parintorn0/hospital-queuing-system</url>
+    </repository>
+  </distributionManagement>
 </project>
