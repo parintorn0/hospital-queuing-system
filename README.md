@@ -10,7 +10,7 @@
 ### Build and Run
 `mvn clean package` to build app
 
-`java -cp "target/hospital-queuing-system-1.0-SNAPSHOT.jar" com.parintorn0.app.HospitalQueue` to run app
+`java -cp "/path/to/hospital-queuing-system-v*.*.*.jar" com.parintorn0.app.HospitalQueue` to run app
 
 ### Run
-`java -cp "target/hospital-queuing-system-1.0-SNAPSHOT.jar" com.parintorn0.app.HospitalQueue` to run app
+`java -cp "/path/to/hospital-queuing-system-v*.*.*.jar" com.parintorn0.app.HospitalQueue` to run app
