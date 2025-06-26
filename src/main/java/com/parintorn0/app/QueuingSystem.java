@@ -1,5 +1,7 @@
 package com.parintorn0.app;
 
+import java.time.LocalDateTime;
+
 class QueuingSystem
 {
     //------------------Object_in_Queueing_system------------------//
@@ -22,7 +24,7 @@ class QueuingSystem
     }
     public static boolean QisEmpty() { return Qfirst==null; } // check whether non-emergency linked list empty
     public static boolean PisEmpty() { return Pfirst==null; } // check whether emergency linked list empty
-    public void insertLast(String name, String reason, Boolean emergency, String time) // Enqueue
+    public void insertLast(String name, String reason, Boolean emergency, LocalDateTime time) // Enqueue
     {
         Link newLink=new Link(name, reason, emergency, time); // create new linked list for inserting new patient queue
         if(emergency)       // check whether emergency
@@ -49,19 +51,19 @@ class QueuingSystem
         {
             System.out.println("There is nothing to delete.");
         }
-        else if(!QisEmpty())                // check whether non-emergency are not empty
-        {
-            if(Qfirst.next == null)         // check whether it has only one non-emergency patient
-                Qlast = null;               // pointer of last of non-emergency linked list is null (No patient)
-            Qfirst = Qfirst.next;           // pointer of non-emergency linked list point to the next linked list
-            numQPatients--;
-        }
-        else                                // emergency are not empty then
+        else if(!PisEmpty())                // check whether emergency are not empty
         {
             if(Pfirst.next == null)         // check whether it has only one emergency patient
                 Plast = null;               // pointer of last of emergency linked list is null (No patient)
             Pfirst = Pfirst.next;           // pointer of emergency linked list point to the next linked list
             numPPatients--;
+        }
+        else                                // non-emergency are not empty then
+        {
+            if(Qfirst.next == null)         // check whether it has only one non-emergency patient
+                Qlast = null;               // pointer of last of non-emergency linked list is null (No patient)
+            Qfirst = Qfirst.next;           // pointer of non-emergency linked list point to the next linked list
+            numQPatients--;
         }
     }
     public Link getQfirst() // get a pointer of non-emergency linked list (for tracking)

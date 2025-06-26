@@ -1,13 +1,31 @@
 package com.parintorn0.app;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import java.io.*;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 // Start with 2 double ended linked list:  Pfirst=>null, Qfirst=>null, Plast=>null, Qlast=>null
 // ->If non-emergency patient come to the hospital (name: A): Pfirst=>null, Qfirst=>A, Plast=>null, Qlast=>A
@@ -36,6 +54,7 @@ public class HospitalQueue extends JFrame
     private JButton dequeueButton;
 
     private static QueuingSystem hospital = new QueuingSystem();
+    private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public HospitalQueue() throws IOException // UI_constructor
     {
@@ -112,7 +131,7 @@ public class HospitalQueue extends JFrame
         submitButton = new JButton("Submit");
         submitButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        clearButton = new JButton("Clear");
+        clearButton = new JButton("Clear Input");
         clearButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         exitButton = new JButton("Exit");
@@ -178,65 +197,66 @@ public class HospitalQueue extends JFrame
 
     public static void write()  // method to save all patients data in txt file
     {
-        try {
-            FileWriter myWriter = new FileWriter("DataBackup.txt");
+        try (
+            Connection connection = DriverManager.getConnection("jdbc:sqlite:app.db");
+            Statement statement = connection.createStatement();
+        ) {
+            statement.setQueryTimeout(30);
+            connection.setAutoCommit(false);
+            statement.executeUpdate("""
+                DELETE FROM link;
+            """);
             Link current=hospital.getPfirst();
+            String query = """
+                INSERT INTO link (name, reason, emergency, datetime) VALUES (?, ?, ?, ?);
+            """;
+            PreparedStatement pstmt = connection.prepareStatement(query);
             for(int i=0;i<hospital.numPPatients;i++){
-                myWriter.write(current.nameData+"\n");
-                myWriter.write(current.reasonData+"\n");
-                myWriter.write(current.timeData+"\n");
+                pstmt.setString(1, current.nameData);
+                pstmt.setString(2, current.reasonData);
+                pstmt.setBoolean(3, current.emergencyData);
+                pstmt.setString(4, dtf.format(current.timeData).toString());
+                pstmt.executeUpdate();
                 current=current.next;
-
             }
-            myWriter.write("0\n");
             current=hospital.getQfirst();
             for(int i=0;i<hospital.numQPatients;i++){
-                myWriter.write(current.nameData+"\n");
-                myWriter.write(current.reasonData+"\n");
-                myWriter.write(current.timeData+"\n");
+                pstmt.setString(1, current.nameData);
+                pstmt.setString(2, current.reasonData);
+                pstmt.setBoolean(3, current.emergencyData);
+                pstmt.setString(4, dtf.format(current.timeData).toString());
+                pstmt.executeUpdate();
                 current=current.next;
             }
-            myWriter.close();
+            connection.commit();
+
+            statement.close();
+            connection.close();
             System.out.println("Successfully wrote to the file.");
-        } catch (IOException e) {
-            System.out.println("An error occurred while writing to the file.");
+        } catch (SQLException e) {
             e.printStackTrace();
+            System.exit(0);
         }
     }
 
     public static void read() throws IOException // method to recall patients data from txt file
     {
-        File file = new File("DataBackup.txt");
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String st;
-            String name;
-            String reason;
-            String time;
-            boolean emergency = true;
-            st = br.readLine();
-            while (!st.equals("0")) {
-                name = st;
-                st = br.readLine();
-                reason = st;
-                st = br.readLine();
-                time = st;
-                st = br.readLine();
-                hospital.insertLast(name,reason,emergency,time);
+        try (
+            Connection connection = DriverManager.getConnection("jdbc:sqlite:app.db");
+            Statement statement = connection.createStatement();
+        ) {
+            ResultSet rs = statement.executeQuery("""
+                SELECT * FROM link ORDER BY datetime ASC;
+            """);
+            while(rs.next()) {
+                String name = rs.getString("name");
+                String reason = rs.getString("reason");
+                boolean emergency = rs.getBoolean("emergency");
+                LocalDateTime time = LocalDateTime.parse(rs.getString("datetime"), dtf);
+                hospital.insertLast(name, reason, emergency, time);
             }
-            st= br.readLine();
-            emergency=false;
-            while(st!=null) {
-                name = st;
-                st = br.readLine();
-                reason = st;
-                st = br.readLine();
-                time = st;
-                st = br.readLine();
-                hospital.insertLast(name,reason,emergency,time);
-            }
-        }
-        catch (Exception e) {
-            System.out.println("An error occurred while reading the file.");
+
+        } catch (SQLException e) {
             e.printStackTrace();
             System.exit(0);
         }
@@ -279,8 +299,7 @@ public class HospitalQueue extends JFrame
                 else
                     emergency = false;
                 //---------call QueueSystem Method----------------------------
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-                hospital.insertLast(name,reason,emergency,(dtf.format(LocalDateTime.now()).toString()));
+                hospital.insertLast(name, reason, emergency, LocalDateTime.now());
                 for(int i=0;i<6;i++){
                     if(hospital.displayPatients()[i]==null){
                         break;
