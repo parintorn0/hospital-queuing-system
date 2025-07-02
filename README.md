@@ -12,4 +12,4 @@
 
 ### Run
 #### copy app.db to `/path/to` directory
-#### `java -cp "/path/to/hospital-queuing-system-v*.*.*.jar" com.parintorn0.app.HospitalQueue` to run app
+#### `java -cp "/path/to/hospital-queuing-system-v*.*.*.jar" com.github.parintorn0.HospitalQueue` to run app

@@ -1,4 +1,4 @@
-package com.parintorn0.app;
+package com.github.parintorn0;
 
 import java.awt.Color;
 import java.awt.Dimension;

@@ -28,7 +28,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       if: github.ref_type == 'tag'
       with:
-        files: target/hospital-queuing-system-*.jar
+        files: target/hospital-queuing-system-v*.jar
         repository: parintorn0/hospital-queuing-system
         token: ${{ secrets.GITHUB_TOKEN }}
 

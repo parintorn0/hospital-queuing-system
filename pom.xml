@@ -3,13 +3,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.parintorn0.app</groupId>
+  <groupId>com.github.parintorn0</groupId>
   <artifactId>hospital-queuing-system</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 
   <name>hospital-queuing-system</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>https://github.com/parintorn0/hospital-queuing-system</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -113,12 +112,8 @@
         </executions>
       </plugin>
     </plugins>
+	<finalName>
+	  hospital-queuing-system-v${project.version}
+	</finalName>
   </build>
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/parintorn0/hospital-queuing-system</url>
-    </repository>
-  </distributionManagement>
 </project>
