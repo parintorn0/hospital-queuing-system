@@ -5,7 +5,7 @@
 
   <groupId>com.github.parintorn0</groupId>
   <artifactId>hospital-queuing-system</artifactId>
-  <version>1.0.3-alpha</version>
+  <version>1.0.3</version>
 
   <name>hospital-queuing-system</name>
   <url>https://github.com/parintorn0/hospital-queuing-system</url>
