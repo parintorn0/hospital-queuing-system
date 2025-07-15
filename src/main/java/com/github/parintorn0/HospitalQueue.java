@@ -48,7 +48,7 @@ public class HospitalQueue extends JFrame
     private final static QueuingSystem hospital = new QueuingSystem();
     private final static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public HospitalQueue() throws IOException // UI_constructor
+    public HospitalQueue() // UI_constructor
     {
         super("Hospital Queue Simulator");
 
@@ -175,7 +175,7 @@ public class HospitalQueue extends JFrame
             if(hospital.displayPatients()[i]==null){
                 break;
             }
-            dataArray[i].setText(String.valueOf(i+1)+" "+hospital.displayPatients()[i]);
+            dataArray[i].setText("%s %s".formatted(i+1,hospital.displayPatients()[i]));
         }
 
         submitButton.addActionListener(new ButtonListener());
@@ -191,35 +191,32 @@ public class HospitalQueue extends JFrame
 
     public static void write() throws SQLException // method to save all patient's data in txt file
     {
-        try (
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:app.db");
-            Statement statement = connection.createStatement();
-        ) {
-            statement.setQueryTimeout(30);
-            connection.setAutoCommit(false);
-            statement.executeUpdate("""
-                DELETE FROM link;
-            """);
-            Link current=hospital.getPFirst();
-            String query = """
-                INSERT INTO link (name, reason, emergency, datetime) VALUES (?, ?, ?, ?);
-            """;
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            for(int i=0;i<hospital.numPPatients;i++){
-                setStatement(current, preparedStatement);
-                current=current.next;
-            }
-            current=hospital.getQFirst();
-            for(int i=0;i<hospital.numQPatients;i++){
-                setStatement(current, preparedStatement);
-                current=current.next;
-            }
-            connection.commit();
-
-            statement.close();
-            connection.close();
-            System.out.println("Successfully wrote to the file.");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:app.db");
+        Statement statement = connection.createStatement();
+        statement.setQueryTimeout(30);
+        connection.setAutoCommit(false);
+        statement.executeUpdate("""
+            DELETE FROM link;
+        """);
+        Link current=hospital.getPFirst();
+        String query = """
+            INSERT INTO link (name, reason, emergency, datetime) VALUES (?, ?, ?, ?);
+        """;
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        for(int i=0;i<hospital.numPPatients;i++){
+            setStatement(current, preparedStatement);
+            current=current.next;
         }
+        current=hospital.getQFirst();
+        for(int i=0;i<hospital.numQPatients;i++){
+            setStatement(current, preparedStatement);
+            current=current.next;
+        }
+        connection.commit();
+
+        statement.close();
+        connection.close();
+        System.out.println("Successfully wrote to the file.");
     }
 
     private static void setStatement(Link current, PreparedStatement preparedStatement) throws SQLException {
@@ -253,7 +250,7 @@ public class HospitalQueue extends JFrame
         public void actionPerformed (ActionEvent e) { // method to receive data inputted from users
             String name;
             String reason;
-            boolean emergency = false;
+            boolean emergency;
             if(e.getSource() == submitButton) {
                 if(nameTextField.getText().equals("Please fill the name") | reasonTextField.getText().equals("Please fill a reason"))
                 {
@@ -285,7 +282,7 @@ public class HospitalQueue extends JFrame
                     if(hospital.displayPatients()[i]==null){
                         break;
                     }
-                    dataArray[i].setText(String.valueOf(i+1)+" "+hospital.displayPatients()[i]);
+                    dataArray[i].setText("%s %s".formatted(i+1, hospital.displayPatients()[i]));
                 }
                 try {
                     HospitalQueue.write();
@@ -321,7 +318,7 @@ public class HospitalQueue extends JFrame
                         }
                         break;
                     }
-                    dataArray[i].setText(String.valueOf(i+1)+" "+hospital.displayPatients()[i]);
+                    dataArray[i].setText("%s %s".formatted(i+1, hospital.displayPatients()[i]));
                 }
                 try {
                     HospitalQueue.write();
