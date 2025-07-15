@@ -156,7 +156,7 @@ public class HospitalQueue extends JFrame
 
         JPanel panelMain = new JPanel();
         panelMain.setPreferredSize(new Dimension(800, 450));
-        panelMain.setLayout(new GridLayout(2, 1)); // set layout for main panel to display 2 rows with 10px gap
+        panelMain.setLayout(new GridLayout(2, 1)); // set layout for the main panel to display 2 rows with 10 px gap
         panelMain.add(topPanel);
         panelMain.add(panelData);
         panelMain.setBorder(new javax.swing.border.LineBorder(new Color(1),1)); // set border for user input panel
