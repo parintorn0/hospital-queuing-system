@@ -10,7 +10,7 @@ class Link
     public String reasonData;
     public Boolean emergencyData;
     public LocalDateTime timeData;         // Using local time to sort the patients
-    public Link next;               // a next linked list of this linked list
+    public Link next;               // the next linked list of this linked list
 
     //------------------Linked_list_Methods------------------//
     public Link(String name, String reason, Boolean emergency, LocalDateTime time)     // Linked_list_constructor

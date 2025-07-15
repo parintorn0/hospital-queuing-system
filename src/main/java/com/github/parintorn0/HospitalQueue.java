@@ -27,56 +27,46 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-// Start with 2 double ended linked list:  Pfirst=>null, Qfirst=>null, Plast=>null, Qlast=>null
-// ->If non-emergency patient come to the hospital (name: A): Pfirst=>null, Qfirst=>A, Plast=>null, Qlast=>A
-// ->If non-emergency patient come to the hospital (name: B): Pfirst=>null, Qfirst=>A=>B, Plast=>null, Qlast=>B
-// ->If emergency patient come to the hospital (name: C): Pfirst=>C, Qfirst=>A=>B, Plast=>C, Qlast=>B
-// ->If emergency patient come to the hospital (name: D): Pfirst=>C=>D, Qfirst=>A=>B, Plast=>D, Qlast=>B
+// Start with 2 double ended linked list:  PFirst=>null, QFirst=>null, PFast=>null, QLast=>null
+// ->If non-emergency patient come to the hospital (name: A): PFirst=>null, QFirst=>A, PLast=>null, QLast=>A
+// ->If non-emergency patient come to the hospital (name: B): PFirst=>null, QFirst=>A=>B, PLast=>null, QLast=>B
+// ->If emergency patient come to the hospital (name: C): PFirst=>C, QFirst=>A=>B, PLast=>C, QLast=>B
+// ->If emergency patient come to the hospital (name: D): PFirst=>C=>D, QFirst=>A=>B, PLast=>D, QLast=>B
 
 public class HospitalQueue extends JFrame
 {
-    private JTextField nameTextfield;
-    private JTextField reasonTextfield;
-    private JButton submitButton;
-    private JButton clearButton;
-    private JButton exitButton;
-    private JRadioButton yesRadioButton;
-    private JRadioButton noRadioButton;
-    private JLabel nameLabel;
-    private JLabel reasonLabel;
-    private JLabel emergencyLabel;
-    private JPanel panelMain;
-    private JPanel buttonPanel;
-    private JPanel panelData;
-    private JPanel userInputPanel;
+    private final JTextField nameTextField;
+    private final JTextField reasonTextField;
+    private final JButton submitButton;
+    private final JButton clearButton;
+    private final JRadioButton yesRadioButton;
+    private final JRadioButton noRadioButton;
     //-------Data Label--------------------------
     private final JLabel[] dataArray =new JLabel[6];        // create an array to contain all data labels
-    private JButton dequeueButton;
+    private final JButton dequeueButton;
 
-    private static QueuingSystem hospital = new QueuingSystem();
-    private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final static QueuingSystem hospital = new QueuingSystem();
+    private final static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public HospitalQueue() throws IOException // UI_constructor
     {
         super("Hospital Queue Simulator");
-        
-        nameLabel = new JLabel("Name");
+
+        JLabel nameLabel = new JLabel("Name");
         nameLabel.setPreferredSize(new Dimension(64, 16));
         nameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        reasonLabel = new JLabel("Reason");
+        JLabel reasonLabel = new JLabel("Reason");
         reasonLabel.setPreferredSize(new Dimension(64, 16));
         reasonLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        nameTextfield = new JTextField(1);
-        nameTextfield.setFont(new Font("Arial", Font.PLAIN, 14));
-        // nameTextfield.setPreferredSize(new Dimension(550, 24));
+        nameTextField = new JTextField(1);
+        nameTextField.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        reasonTextfield = new JTextField(1);
-        reasonTextfield.setFont(new Font("Arial", Font.PLAIN, 14));
-        // reasonTextfield.setPreferredSize(new Dimension(550, 24));
+        reasonTextField = new JTextField(1);
+        reasonTextField.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        emergencyLabel = new JLabel("Emergency");
+        JLabel emergencyLabel = new JLabel("Emergency");
         emergencyLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
         yesRadioButton = new JRadioButton("Emergency");
@@ -91,7 +81,7 @@ public class HospitalQueue extends JFrame
         radioPanel.add(noRadioButton);
 
 
-        userInputPanel = new JPanel(new GridBagLayout());
+        JPanel userInputPanel = new JPanel(new GridBagLayout());
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -105,7 +95,7 @@ public class HospitalQueue extends JFrame
         c.gridx = 1;
         c.gridy = 0;
         c.gridwidth = 2;
-        userInputPanel.add(nameTextfield, c);
+        userInputPanel.add(nameTextField, c);
 
         c.gridx = 0;
         c.gridy = 1;
@@ -115,7 +105,7 @@ public class HospitalQueue extends JFrame
         c.gridx = 1;
         c.gridy = 1;
         c.gridwidth = 2;
-        userInputPanel.add(reasonTextfield, c);
+        userInputPanel.add(reasonTextField, c);
 
         c.gridx = 0;
         c.gridy = 2;
@@ -134,21 +124,21 @@ public class HospitalQueue extends JFrame
         clearButton = new JButton("Clear Input");
         clearButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        exitButton = new JButton("Exit");
+        JButton exitButton = new JButton("Exit");
         exitButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         dequeueButton = new JButton("Dequeue");
         dequeueButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
 
-        buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(4, 1, 10, 10));
         buttonPanel.add(submitButton);
         buttonPanel.add(clearButton);
         buttonPanel.add(exitButton);
         buttonPanel.add(dequeueButton);
 
-        panelData = new JPanel();
+        JPanel panelData = new JPanel();
         panelData.setLayout(new GridLayout(6, 1, 5, 5));
         panelData.setBorder(new javax.swing.border.EmptyBorder(new Insets(10,20,20,10))); // set border for data panel
 
@@ -165,7 +155,7 @@ public class HospitalQueue extends JFrame
         topPanel.add(userInputPanel);
         topPanel.add(buttonPanel);
 
-        panelMain = new JPanel();
+        JPanel panelMain = new JPanel();
         panelMain.setPreferredSize(new Dimension(800, 450));
         panelMain.setLayout(new GridLayout(2, 1)); // set layout for main panel to display 2 rows with 10px gap
         panelMain.add(topPanel);
@@ -175,7 +165,11 @@ public class HospitalQueue extends JFrame
 
         setContentPane(panelMain);
         pack();                        // display with decent window dimension
-        read();
+        try {
+            read();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         for(int i=0;i<6;i++){               // display all patients data from array into UI labels
             if(hospital.displayPatients()[i]==null){
@@ -195,7 +189,7 @@ public class HospitalQueue extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public static void write()  // method to save all patients data in txt file
+    public static void write() throws SQLException // method to save all patient's data in txt file
     {
         try (
             Connection connection = DriverManager.getConnection("jdbc:sqlite:app.db");
@@ -206,26 +200,18 @@ public class HospitalQueue extends JFrame
             statement.executeUpdate("""
                 DELETE FROM link;
             """);
-            Link current=hospital.getPfirst();
+            Link current=hospital.getPFirst();
             String query = """
                 INSERT INTO link (name, reason, emergency, datetime) VALUES (?, ?, ?, ?);
             """;
-            PreparedStatement pstmt = connection.prepareStatement(query);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
             for(int i=0;i<hospital.numPPatients;i++){
-                pstmt.setString(1, current.nameData);
-                pstmt.setString(2, current.reasonData);
-                pstmt.setBoolean(3, current.emergencyData);
-                pstmt.setString(4, dtf.format(current.timeData).toString());
-                pstmt.executeUpdate();
+                setStatement(current, preparedStatement);
                 current=current.next;
             }
-            current=hospital.getQfirst();
+            current=hospital.getQFirst();
             for(int i=0;i<hospital.numQPatients;i++){
-                pstmt.setString(1, current.nameData);
-                pstmt.setString(2, current.reasonData);
-                pstmt.setBoolean(3, current.emergencyData);
-                pstmt.setString(4, dtf.format(current.timeData).toString());
-                pstmt.executeUpdate();
+                setStatement(current, preparedStatement);
                 current=current.next;
             }
             connection.commit();
@@ -233,32 +219,30 @@ public class HospitalQueue extends JFrame
             statement.close();
             connection.close();
             System.out.println("Successfully wrote to the file.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.exit(0);
         }
     }
 
-    public static void read() throws IOException // method to recall patients data from txt file
-    {
-        try (
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:app.db");
-            Statement statement = connection.createStatement();
-        ) {
-            ResultSet rs = statement.executeQuery("""
-                SELECT * FROM link ORDER BY datetime ASC;
-            """);
-            while(rs.next()) {
-                String name = rs.getString("name");
-                String reason = rs.getString("reason");
-                boolean emergency = rs.getBoolean("emergency");
-                LocalDateTime time = LocalDateTime.parse(rs.getString("datetime"), dtf);
-                hospital.insertLast(name, reason, emergency, time);
-            }
+    private static void setStatement(Link current, PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement.setString(1, current.nameData);
+        preparedStatement.setString(2, current.reasonData);
+        preparedStatement.setBoolean(3, current.emergencyData);
+        preparedStatement.setString(4, dtf.format(current.timeData));
+        preparedStatement.executeUpdate();
+    }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.exit(0);
+    public static void read() throws SQLException // method to recall patients' data from txt file
+    {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:app.db");
+        Statement statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery("""
+            SELECT * FROM link ORDER BY datetime ASC;
+        """);
+        while(rs.next()) {
+            String name = rs.getString("name");
+            String reason = rs.getString("reason");
+            boolean emergency = rs.getBoolean("emergency");
+            LocalDateTime time = LocalDateTime.parse(rs.getString("datetime"), dtf);
+            hospital.insertLast(name, reason, emergency, time);
         }
         System.out.println("Successfully read the file.");
     }
@@ -266,38 +250,35 @@ public class HospitalQueue extends JFrame
 
     public class ButtonListener implements ActionListener{ // class ButtonListener
 
-        public void actionPerformed (ActionEvent e){ // method to receive data inputed from users
+        public void actionPerformed (ActionEvent e) { // method to receive data inputted from users
             String name;
             String reason;
-            Boolean emergency = false;
+            boolean emergency = false;
             if(e.getSource() == submitButton) {
-                if(nameTextfield.getText().equals("Please fill the name") | reasonTextfield.getText().equals("Please fill a reason"))
+                if(nameTextField.getText().equals("Please fill the name") | reasonTextField.getText().equals("Please fill a reason"))
                 {
                     return;
                 }
-                if(nameTextfield.getText().isEmpty() & reasonTextfield.getText().isEmpty())
+                if(nameTextField.getText().isEmpty() & reasonTextField.getText().isEmpty())
                 {
-                    nameTextfield.setText("Please fill the name");
-                    reasonTextfield.setText("Please fill a reason");
+                    nameTextField.setText("Please fill the name");
+                    reasonTextField.setText("Please fill a reason");
                     return;
                 }
-                else if(reasonTextfield.getText().isEmpty())
+                else if(reasonTextField.getText().isEmpty())
                 {
-                    reasonTextfield.setText("Please fill a reason");
+                    reasonTextField.setText("Please fill a reason");
                     return;
                 }
-                else if(nameTextfield.getText().isEmpty())
+                else if(nameTextField.getText().isEmpty())
                 {
-                    nameTextfield.setText("Please fill a name");
+                    nameTextField.setText("Please fill a name");
                     return;
                 }
                 if((!yesRadioButton.isSelected() & !noRadioButton.isSelected())){ return; }
-                name = nameTextfield.getText();
-                reason = reasonTextfield.getText();
-                if (yesRadioButton.isSelected())
-                    emergency = true;
-                else
-                    emergency = false;
+                name = nameTextField.getText();
+                reason = reasonTextField.getText();
+                emergency = yesRadioButton.isSelected();
                 //---------call QueueSystem Method----------------------------
                 hospital.insertLast(name, reason, emergency, LocalDateTime.now());
                 for(int i=0;i<6;i++){
@@ -306,16 +287,20 @@ public class HospitalQueue extends JFrame
                     }
                     dataArray[i].setText(String.valueOf(i+1)+" "+hospital.displayPatients()[i]);
                 }
-                HospitalQueue.write();
+                try {
+                    HospitalQueue.write();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 //---------Clear text in all button---------------------------
-                nameTextfield.setText("");
-                reasonTextfield.setText("");
+                nameTextField.setText("");
+                reasonTextField.setText("");
                 yesRadioButton.setSelected(false);
                 noRadioButton.setSelected(true);
             }
             else if(e.getSource() == clearButton){ //Clear text in all button
-                nameTextfield.setText("");
-                reasonTextfield.setText("");
+                nameTextField.setText("");
+                reasonTextField.setText("");
                 yesRadioButton.setSelected(false);
                 noRadioButton.setSelected(true);
             }
@@ -338,7 +323,11 @@ public class HospitalQueue extends JFrame
                     }
                     dataArray[i].setText(String.valueOf(i+1)+" "+hospital.displayPatients()[i]);
                 }
-                HospitalQueue.write();
+                try {
+                    HospitalQueue.write();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
             else {
                 System.exit(0);
