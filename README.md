@@ -5,7 +5,7 @@
 - JDK 21 (Tested)
 
 ### Run Requirement
-- JVM 21 (Tested)
+- JRE 21 (Tested)
 
 ### Build
 #### `mvn clean package` to build app
