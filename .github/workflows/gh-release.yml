@@ -31,4 +31,5 @@ jobs:
         files: target/hospital-queuing-system-v*.jar
         repository: parintorn0/hospital-queuing-system
         token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: true
 
