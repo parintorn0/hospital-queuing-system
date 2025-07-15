@@ -149,7 +149,7 @@ public class HospitalQueue extends JFrame
         }
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10)); // create a top panel with FlowLayout
-        topPanel.setPreferredSize(new Dimension(600, 100)); // set preferred size for top panel
+        topPanel.setPreferredSize(new Dimension(600, 100)); // set the preferred size for a top panel
         topPanel.setBorder(new javax.swing.border.EmptyBorder(new Insets(20,20,20,20))); // set border for button panel
         topPanel.add(userInputPanel);
         topPanel.add(buttonPanel);
@@ -163,7 +163,7 @@ public class HospitalQueue extends JFrame
         
 
         setContentPane(panelMain);
-        pack();                        // display with decent window dimension
+        pack();                        // display with a decent window dimension
         try {
             read();
         } catch (SQLException e) {
@@ -294,7 +294,7 @@ public class HospitalQueue extends JFrame
                 yesRadioButton.setSelected(false);
                 noRadioButton.setSelected(true);
             }
-            else if(e.getSource() == clearButton){ //Clear text in all button
+            else if(e.getSource() == clearButton){ //Clear text in all buttons
                 nameTextField.setText("");
                 reasonTextField.setText("");
                 yesRadioButton.setSelected(false);
