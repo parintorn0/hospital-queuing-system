@@ -20,7 +20,7 @@ class Link
         emergencyData = emergency;
         timeData = time;
     }
-    public String displayLink()             // To return all information in each patient
+    public String displayLink()             // To return all information to each patient
     {
         DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss");
         if(emergencyData) {          // check whether emergency
